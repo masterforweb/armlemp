@@ -74,8 +74,6 @@ volumes:
     driver: local 
   search: 
     driver: local
-  sphlogs:
-    driver: local 
   myslogs:   
     driver: local     
 
