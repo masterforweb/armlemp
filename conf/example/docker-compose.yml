@@ -1,0 +1,10 @@
+version: '2'
+
+services:  
+  
+  
+## mariadb Container #######################################  
+
+  mysql:
+    environment:
+      MYSQL_ROOT_PASSWORD: MyAD12

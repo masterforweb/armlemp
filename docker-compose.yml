@@ -1,0 +1,83 @@
+version: '2'
+
+services:  
+  
+## nginx Container #######################################
+  nginx:
+    image: nginx:alpine
+    restart: always
+    links:
+      - fpm
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/snippets:/nginx/snippets
+      - ngxlogs:/var/log/nginx
+      - ngxcache:/var/cache/nginx
+    volumes_from:
+      - fpm
+
+  
+## mariadb Container #######################################  
+
+  mysql:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: MyAD1
+    volumes:  
+      - mysdata:/var/lib/mysql
+      - myslogs:/var/log/mysql
+      - ./backup:/var/backup
+    logging:
+      driver: "none"  
+
+
+## fpm Container ####################################### 
+  fpm:
+    image: masterforweb/php7-fpm-alpine
+    restart: always
+    volumes:  
+      - ./vhosts:/var/www/html
+    links:
+      - mysql:mysql
+    logging:
+      driver: "none"        
+
+     
+## phpmyadmin Container #######################################    
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - mysql
+    restart: always
+    ports:
+     - 8181:80
+    volumes:
+     - /sessions
+    environment: 
+      PMA_ARBITRARY: 1
+    logging:
+      driver: "none"  
+ 
+## named volumes #######################################   
+
+volumes:
+  ngxlogs:
+    driver: local
+  ngxcache:
+    driver: local
+  mysdata:
+    driver: local 
+  search: 
+    driver: local
+  sphlogs:
+    driver: local 
+  myslogs:   
+    driver: local     
+
+       
+ 
